@@ -4,7 +4,7 @@
  * @param {Array} points 
  * @param {boolean} isClosed 
  */
-function myDrawContour(
+function mymyDrawContour(
     ctx,
     points,
     isClosed = false
@@ -92,12 +92,12 @@ class MyDrawFaceLandmarks
 
     draw(ctx)
     {
-        drawContour(ctx, this.faceLandmarks.getJawOutline())
-        drawContour(ctx, this.faceLandmarks.getLeftEyeBrow())
-        drawContour(ctx, this.faceLandmarks.getRightEyeBrow())
-        drawContour(ctx, this.faceLandmarks.getNose())
-        drawContour(ctx, this.faceLandmarks.getLeftEye(), true)
-        drawContour(ctx, this.faceLandmarks.getRightEye(), true)
-        drawContour(ctx, this.faceLandmarks.getMouth(), true)
+        myDrawContour(ctx, this.faceLandmarks.getJawOutline())
+        myDrawContour(ctx, this.faceLandmarks.getLeftEyeBrow())
+        myDrawContour(ctx, this.faceLandmarks.getRightEyeBrow())
+        myDrawContour(ctx, this.faceLandmarks.getNose())
+        myDrawContour(ctx, this.faceLandmarks.getLeftEye(), true)
+        myDrawContour(ctx, this.faceLandmarks.getRightEye(), true)
+        myDrawContour(ctx, this.faceLandmarks.getMouth(), true)
     }
 }
