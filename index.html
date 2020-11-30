@@ -9,13 +9,6 @@
 </head>
 
 <body>
-    <div id="videoPreview">
-        <p>video preview</p>
-    </div>
-
-    <div id="canvasPreview">
-        <p>canvas preview</p>
-    </div>
     <img id="img" src="face.jpg"></img>
     <canvas id="canvas"></canvas>
     <script type="text/javascript">
@@ -113,6 +106,7 @@
 
             draw(ctx)
             {
+                ctx.strokeStyle = 'red'
                 myDrawContour(ctx, this.faceLandmarks.getJawOutline())
                 myDrawContour(ctx, this.faceLandmarks.getLeftEyeBrow())
                 myDrawContour(ctx, this.faceLandmarks.getRightEyeBrow())
@@ -124,7 +118,8 @@
         }
         // 画像の取得
         const img = document.getElementById('img')
-
+        const element = document.getElementById('canvas')
+        const ctx = element.getContext('2D')
         const app = async () =>
         {
             // モデルの読み込み
@@ -136,7 +131,7 @@
 
             // canvasへ描画
             const resizeResults = faceapi.resizeResults(detections, img);
-            await new MyDrawFaceLandmarks(resizeResults).draw(canvas)
+            await new MyDrawFaceLandmarks(resizeResults).draw(ctx)
 
             // 結果の出力
             console.log(detections);
