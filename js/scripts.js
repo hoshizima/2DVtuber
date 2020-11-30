@@ -4,7 +4,7 @@
  * @param {Array} points 
  * @param {boolean} isClosed 
  */
-function mymyDrawContour(
+function myDrawContour(
     ctx,
     points,
     isClosed = false
