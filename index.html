@@ -29,7 +29,7 @@
             points.slice(1).forEach(({ x, y }, prevIdx) =>
             {
                 const from = points[prevIdx];
-                ctx.moveTo(from.x, from.y);
+                ctx.moveTo(from._x, from._y);
                 ctx.lineTo(x, y);
             })
 
@@ -42,8 +42,8 @@
                     return;
                 }
 
-                ctx.moveTo(from.x, from.y);
-                ctx.lineTo(to.x, to.y);
+                ctx.moveTo(from._x, from._y);
+                ctx.lineTo(to._x, to._y);
             }
 
             ctx.stroke();
@@ -130,7 +130,7 @@
 
             // canvasへ描画
             const resizeResults = faceapi.resizeResults(detections, img);
-            await new MyDrawFaceLandmarks(resizeResults).draw(ctx);
+            await new MyDrawFaceLandmarks(resizeResults[0]["landmarks"]["_positions"]).draw(ctx);
 
             // 結果の出力
             console.log(detections);
