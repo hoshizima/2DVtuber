@@ -28,25 +28,25 @@
 
             points.slice(1).forEach(({ x, y }, prevIdx) =>
             {
-                const from = points[prevIdx]
-                ctx.moveTo(from.x, from.y)
-                ctx.lineTo(x, y)
+                const from = points[prevIdx];
+                ctx.moveTo(from.x, from.y);
+                ctx.lineTo(x, y);
             })
 
             if (isClosed)
             {
-                const from = points[points.length - 1]
-                const to = points[0]
+                const from = points[points.length - 1];
+                const to = points[0];
                 if (!from || !to)
                 {
-                    return
+                    return;
                 }
 
-                ctx.moveTo(from.x, from.y)
-                ctx.lineTo(to.x, to.y)
+                ctx.moveTo(from.x, from.y);
+                ctx.lineTo(to.x, to.y);
             }
 
-            ctx.stroke()
+            ctx.stroke();
         }
 
         /**
@@ -60,37 +60,37 @@
             }
             getJawOutline()
             {
-                return this.positions.slice(0, 17)
+                return this.positions.slice(0, 17);
             }
 
             getLeftEyeBrow()
             {
-                return this.positions.slice(17, 22)
+                return this.positions.slice(17, 22);
             }
 
             getRightEyeBrow()
             {
-                return this.positions.slice(22, 27)
+                return this.positions.slice(22, 27);
             }
 
             getNose()
             {
-                return this.positions.slice(27, 36)
+                return this.positions.slice(27, 36);
             }
 
             getLeftEye()
             {
-                return this.positions.slice(36, 42)
+                return this.positions.slice(36, 42);
             }
 
             getRightEye()
             {
-                return this.positions.slice(42, 48)
+                return this.positions.slice(42, 48);
             }
 
             getMouth()
             {
-                return this.positions.slice(48, 68)
+                return this.positions.slice(48, 68);
             }
         }
 
@@ -101,18 +101,18 @@
         {
             constructor(faceLandmarks)
             {
-                this.faceLandmarks = new MyFaceLandmarks(faceLandmarks)
+                this.faceLandmarks = new MyFaceLandmarks(faceLandmarks);
             }
 
             draw(ctx)
             {
-                myDrawContour(ctx, this.faceLandmarks.getJawOutline())
-                myDrawContour(ctx, this.faceLandmarks.getLeftEyeBrow())
-                myDrawContour(ctx, this.faceLandmarks.getRightEyeBrow())
-                myDrawContour(ctx, this.faceLandmarks.getNose())
-                myDrawContour(ctx, this.faceLandmarks.getLeftEye(), true)
-                myDrawContour(ctx, this.faceLandmarks.getRightEye(), true)
-                myDrawContour(ctx, this.faceLandmarks.getMouth(), true)
+                myDrawContour(ctx, this.faceLandmarks.getJawOutline());
+                myDrawContour(ctx, this.faceLandmarks.getLeftEyeBrow());
+                myDrawContour(ctx, this.faceLandmarks.getRightEyeBrow());
+                myDrawContour(ctx, this.faceLandmarks.getNose());
+                myDrawContour(ctx, this.faceLandmarks.getLeftEye(), true);
+                myDrawContour(ctx, this.faceLandmarks.getRightEye(), true);
+                myDrawContour(ctx, this.faceLandmarks.getMouth(), true);
             }
         }
         // 画像の取得
@@ -134,9 +134,10 @@
 
             // 結果の出力
             console.log(detections);
+            var test = resizeResults;
             console.log(resizeResults);
         }
-        app()
+        app();
     </script>
 </body>
 
