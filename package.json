@@ -1,0 +1,25 @@
+{
+  "name": "2dvtuber",
+  "version": "1.0.0",
+  "description": "face-api application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hoshizima/2DVtuber.git"
+  },
+  "keywords": [
+    "2dvtuber"
+  ],
+  "author": "hoshizima",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hoshizima/2DVtuber/issues"
+  },
+  "homepage": "https://github.com/hoshizima/2DVtuber#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
