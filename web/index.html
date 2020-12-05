@@ -9,8 +9,10 @@
 </head>
 
 <body>
-    <img id="img" src="img/face.jpg"></img>
-    <canvas id="canvas"></canvas>
+    <div style="position: relative" class="margin">
+        <video onloadedmetadata="onPlay(this)" id="video" autoplay muted playsinline></video>
+        <canvas id="canvas"></canvas>
+    </div>
     <script type="text/javascript">
         /**
          * 
@@ -115,12 +117,17 @@
                 myDrawContour(ctx, this.faceLandmarks.getMouth(), true);
             }
         }
+
+
         // 画像の取得
         const img = document.getElementById('img');
+        const video = document.getElementById('video');
         const element = document.getElementById('canvas');
         const ctx = element.getContext('2d');
         const app = async () =>
         {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+            video.srcObject = stream;
             // モデルの読み込み
             await faceapi.nets.tinyFaceDetector.load("models/");
             await faceapi.nets.faceLandmark68Net.load("models/");
@@ -131,10 +138,6 @@
             // canvasへ描画
             const resizeResults = faceapi.resizeResults(detections, img);
             await new MyDrawFaceLandmarks(resizeResults[0]["landmarks"]["_positions"]).draw(ctx);
-
-            // 結果の出力
-            console.log(detections);
-            console.log(resizeResults[0]["landmarks"]["_positions"]);
         }
         app();
     </script>
