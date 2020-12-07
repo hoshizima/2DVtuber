@@ -92,6 +92,7 @@ class MyDrawFaceLandmarks
 
     draw(ctx)
     {
+        
         myDrawContour(ctx, this.faceLandmarks.getJawOutline())
         myDrawContour(ctx, this.faceLandmarks.getLeftEyeBrow())
         myDrawContour(ctx, this.faceLandmarks.getRightEyeBrow())

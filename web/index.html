@@ -10,7 +10,7 @@
 
 <body>
     <div style="position: relative" class="margin">
-        <video onloadedmetadata="onPlay(this)" id="video" autoplay muted playsinline></video>
+        <video onloadedmetadata="onPlay(this)" id="video" autoplay muted playsinline width="640" height=""></video>
         <canvas id="canvas"></canvas>
     </div>
     <script type="text/javascript">
@@ -119,27 +119,44 @@
         }
 
 
-        // 画像の取得
-        const img = document.getElementById('img');
-        const video = document.getElementById('video');
-        const element = document.getElementById('canvas');
-        const ctx = element.getContext('2d');
-        const app = async () =>
-        {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
-            video.srcObject = stream;
-            // モデルの読み込み
-            await faceapi.nets.tinyFaceDetector.load("models/");
-            await faceapi.nets.faceLandmark68Net.load("models/");
+        async function onPlay()
+            {
+                const videoEl = document.getElementById('video');
 
-            // 顔検出の実行
-            const detections = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
+                const result = await faceapi.detectSingleFace(videoEl, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
+                console.log(result);
 
-            // canvasへ描画
-            const resizeResults = faceapi.resizeResults(detections, img);
-            await new MyDrawFaceLandmarks(resizeResults[0]["landmarks"]["_positions"]).draw(ctx);
-        }
-        app();
+                if (result)
+                {
+                    const element = document.getElementById('canvas');
+                    const canvas = element.getContext('2d');
+                    const dims = faceapi.matchDimensions(element, videoEl, true);
+                    const resizedResults = faceapi.resizeResults(result, dims);
+                    console.log(resizedResults);
+                    await new MyDrawFaceLandmarks(resizedResults['landmarks']['_positions']).draw(canvas);
+                }
+
+                setTimeout(() => onPlay());
+            }
+                async function run()
+                    {
+                        // load face detection and face landmark models
+                        await faceapi.nets.tinyFaceDetector.load("models/");
+                        await faceapi.nets.faceLandmark68Net.load("models/");
+                        // try to access users webcam and stream the images
+                        // to the video element
+                        const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+                        const videoEl = document.getElementById('video');
+                        videoEl.srcObject = stream;
+                    }
+
+                    function updateResults() { }
+
+                    document.addEventListener('DOMContentLoaded',function ()
+                    {
+                        run();
+                    })
+                    
     </script>
 </body>
 
