@@ -4,126 +4,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <script src="js/face-api.min.js"></script>
-    <title>2DVtuber</title>
+    <!-- BootstrapのCSS読み込み -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery読み込み -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- BootstrapのJS読み込み -->
+    <script src="js/bootstrap.min.js"></script>
+    <title>i_wanna_be_the_UNCHI</title>
 </head>
 
 <body>
     <div style="position: relative" class="margin">
-        <video onloadedmetadata="onPlay(this)" id="video" autoplay muted playsinline style="position: absolute; top: 5px; z-index:0; "></video>
-        <div style = "position:absolute; top:5px; z-index:1; background:white; width:1280px; height:720px;"></div>
+        <video onloadedmetadata="onPlay(this)" id="video" autoplay muted playsinline style="position: absolute; top: 5px; z-index:0; width:640px; height:360px;"></video>
+        <div style = "position:absolute; top:5px; z-index:1; background:white; width:640px; height:360px;"></div>
         <canvas id="canvas" style = "position:absolute; top:5px; z-index:2;"></canvas>
     </div>
     <script type="text/javascript">
-        /**
-         * 
-         * @param {canvasElement} ctx 
-         * @param {Array} points 
-         * @param {boolean} isClosed 
-         */
-        function myDrawContour(
-            ctx,
-            points,
-            isClosed = false
-        )
-        {
-            ctx.beginPath();
-
-            points.slice(1).forEach(({ x, y }, prevIdx) =>
+            /**
+             * 
+             * @param {canvasElement} ctx 
+             * @param {Array} points 
+             * @param {boolean} isClosed 
+             */
+            function myDrawContour(
+                ctx,
+                points,
+                isClosed = false
+            )
             {
-                const from = points[prevIdx];
-                ctx.moveTo(from._x, from._y);
-                ctx.lineTo(x, y);
-            })
+                ctx.beginPath();
 
-            if (isClosed)
-            {
-                const from = points[points.length - 1];
-                const to = points[0];
-                if (!from || !to)
+                points.slice(1).forEach(({ x, y }, prevIdx) =>
                 {
-                    return;
+                    const from = points[prevIdx];
+                    ctx.moveTo(from._x, from._y);
+                    ctx.lineTo(x, y);
+                })
+
+                if (isClosed)
+                {
+                    const from = points[points.length - 1];
+                    const to = points[0];
+                    if (!from || !to)
+                    {
+                        return;
+                    }
+
+                    ctx.moveTo(from._x, from._y);
+                    ctx.lineTo(to._x, to._y);
                 }
 
-                ctx.moveTo(from._x, from._y);
-                ctx.lineTo(to._x, to._y);
+                ctx.stroke();
             }
 
-            ctx.stroke();
-        }
+            /**
+             * 
+             */
+            class MyFaceLandmarks
+            {
+                constructor(positions)
+                {
+                    this.positions = positions;
+                }
+                getJawOutline()
+                {
+                    return this.positions.slice(0, 17);
+                }
 
-        /**
-         * 
-         */
-        class MyFaceLandmarks
-        {
-            constructor(positions)
-            {
-                this.positions = positions;
-            }
-            getJawOutline()
-            {
-                return this.positions.slice(0, 17);
-            }
+                getLeftEyeBrow()
+                {
+                    return this.positions.slice(17, 22);
+                }
 
-            getLeftEyeBrow()
-            {
-                return this.positions.slice(17, 22);
-            }
+                getRightEyeBrow()
+                {
+                    return this.positions.slice(22, 27);
+                }
 
-            getRightEyeBrow()
-            {
-                return this.positions.slice(22, 27);
-            }
+                getNose()
+                {
+                    return this.positions.slice(27, 36);
+                }
 
-            getNose()
-            {
-                return this.positions.slice(27, 36);
-            }
+                getLeftEye()
+                {
+                    return this.positions.slice(36, 42);
+                }
 
-            getLeftEye()
-            {
-                return this.positions.slice(36, 42);
-            }
+                getRightEye()
+                {
+                    return this.positions.slice(42, 48);
+                }
 
-            getRightEye()
-            {
-                return this.positions.slice(42, 48);
-            }
-
-            getMouth()
-            {
-                return this.positions.slice(48, 68);
-            }
-        }
-
-        /**
-         * 
-         */
-        class MyDrawFaceLandmarks
-        {
-            constructor(faceLandmarks)
-            {
-                this.faceLandmarks = new MyFaceLandmarks(faceLandmarks);
+                getMouth()
+                {
+                    return this.positions.slice(48, 68);
+                }
             }
 
-            draw(ctx)
+            /**
+             * 
+             */
+            class MyDrawFaceLandmarks
             {
-                myDrawContour(ctx, this.faceLandmarks.getJawOutline());
-                myDrawContour(ctx, this.faceLandmarks.getLeftEyeBrow());
-                myDrawContour(ctx, this.faceLandmarks.getRightEyeBrow());
-                myDrawContour(ctx, this.faceLandmarks.getNose());
-                myDrawContour(ctx, this.faceLandmarks.getLeftEye(), true);
-                myDrawContour(ctx, this.faceLandmarks.getRightEye(), true);
-                myDrawContour(ctx, this.faceLandmarks.getMouth(), true);
+                constructor(faceLandmarks)
+                {
+                    this.faceLandmarks = new MyFaceLandmarks(faceLandmarks);
+                }
+
+                draw(ctx)
+                {
+                    //myDrawContour(ctx, this.faceLandmarks.getJawOutline());
+                    myDrawContour(ctx, this.faceLandmarks.getLeftEyeBrow());
+                    myDrawContour(ctx, this.faceLandmarks.getRightEyeBrow());
+                    myDrawContour(ctx, this.faceLandmarks.getNose());
+                    myDrawContour(ctx, this.faceLandmarks.getLeftEye(), true);
+                    myDrawContour(ctx, this.faceLandmarks.getRightEye(), true);
+                    myDrawContour(ctx, this.faceLandmarks.getMouth(), true);
+                }
             }
-        }
 
 
-        async function onPlay()
+            async function onPlay()
             {
+                const img = new Image();
+                img.src = 'img/unchi.png';
                 const videoEl = document.getElementById('video');
-
                 const result = await faceapi.detectSingleFace(videoEl, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
 
                 if (result)
@@ -132,30 +140,30 @@
                     const canvas = element.getContext('2d');
                     const dims = faceapi.matchDimensions(element, videoEl, true);
                     const resizedResults = faceapi.resizeResults(result, dims);
+                    const resizedResultsBox = resizedResults['alignedRect']['_box'];
+                    console.log(resizedResults);
+                    canvas.drawImage(img, resizedResultsBox['x'], resizedResultsBox['y'] - resizedResultsBox['height'] / 5, resizedResultsBox['width'], resizedResultsBox['height']);
                     await new MyDrawFaceLandmarks(resizedResults['landmarks']['_positions']).draw(canvas);
                 }
 
                 setTimeout(() => onPlay());
             }
-                async function run()
-                    {
-                        // load face detection and face landmark models
-                        await faceapi.nets.tinyFaceDetector.load("models/");
-                        await faceapi.nets.faceLandmark68Net.load("models/");
-                        // try to access users webcam and stream the images
-                        // to the video element
-                        const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
-                        const videoEl = document.getElementById('video');
-                        videoEl.srcObject = stream;
-                    }
+            async function run()
+            {
+                // load face detection and face landmark models
+                await faceapi.nets.tinyFaceDetector.load("models/");
+                await faceapi.nets.faceLandmark68Net.load("models/");
+                // try to access users webcam and stream the images
+                // to the video element
+                const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+                const videoEl = document.getElementById('video');
+                videoEl.srcObject = stream;
+            }
 
-                    function updateResults() { }
-
-                    document.addEventListener('DOMContentLoaded',function ()
-                    {
-                        run();
-                    })
-                    
+            document.addEventListener('DOMContentLoaded', function ()
+            {
+                run();
+            })
     </script>
 </body>
 
