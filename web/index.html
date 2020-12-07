@@ -10,8 +10,9 @@
 
 <body>
     <div style="position: relative" class="margin">
-        <video onloadedmetadata="onPlay(this)" id="video" autoplay muted playsinline width="640" height=""></video>
-        <canvas id="canvas"></canvas>
+        <video onloadedmetadata="onPlay(this)" id="video" autoplay muted playsinline style="position: absolute; top: 5px; z-index:0; "></video>
+        <div style = "position:absolute; top:5px; z-index:1; background:white; width:1280px; height:720px;"></div>
+        <canvas id="canvas" style = "position:absolute; top:5px; z-index:2;"></canvas>
     </div>
     <script type="text/javascript">
         /**
@@ -124,7 +125,6 @@
                 const videoEl = document.getElementById('video');
 
                 const result = await faceapi.detectSingleFace(videoEl, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
-                console.log(result);
 
                 if (result)
                 {
@@ -132,7 +132,6 @@
                     const canvas = element.getContext('2d');
                     const dims = faceapi.matchDimensions(element, videoEl, true);
                     const resizedResults = faceapi.resizeResults(result, dims);
-                    console.log(resizedResults);
                     await new MyDrawFaceLandmarks(resizedResults['landmarks']['_positions']).draw(canvas);
                 }
 
