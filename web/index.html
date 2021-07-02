@@ -15,155 +15,228 @@
     <title>i_wanna_be_the_UNCHI</title>
 </head>
 
-<body>
-    <div style="position: relative" class="margin">
-        <video onloadedmetadata="onPlay(this)" id="video" autoplay muted playsinline style="position: absolute; top: 5px; z-index:0; width:640px; height:360px;"></video>
-        <div style = "position:absolute; top:5px; z-index:1; background:white; width:640px; height:360px;"></div>
-        <canvas id="canvas" style = "position:absolute; top:5px; z-index:2;"></canvas>
+<body style="background-color: white;">
+    <div id="loader" class="d-flex justify-content-center"
+        style="position:absolute; height: 100vh; width: 100vw; z-index: 10; background-color: white;">
+        <div class="spinner-border" role="status">
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <form name="settings">
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" name="hidevideo" value="1"
+                        onchange="displayChange()">
+                    <label class="form-check-label" for="hideVideo">カメラの映像を表示する</label>
+                </div>
+                <label for="customRange1" class="form-label">カメラ映像サイズ</label>
+                <input type="range" value="0" max="100" class="form-range" id="sizeslider" onchange="videoSizeChange()">
+            </form>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-xl-9">
+                <video onloadedmetadata="onPlay(this)" id="video" autoplay muted playsinline
+                    style="position: absolute; z-index:0; width:0%;"></video>
+
+                <canvas id="canvas"
+                    style="position:absolute; z-index:2; background-color:rgba(255,255,2550,1);"></canvas>
+            </div>
+            <div class="col-lg-12 col-xl-3">
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                <!-- スクエア -->
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5397607715860650"
+                    data-ad-slot="1113849819" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
     </div>
     <script type="text/javascript">
-            /**
-             * 
-             * @param {canvasElement} ctx 
-             * @param {Array} points 
-             * @param {boolean} isClosed 
-             */
-            function myDrawContour(
-                ctx,
-                points,
-                isClosed = false
-            )
+        /**
+         * ローディング表示を除去します。
+         */
+        function removeLoadingScene()
+        {
+            const loader = document.getElementById('loader');
+            loader.remove();
+            console.log("test");
+        }
+        /**
+         * カメラからの入力映像を隠します。
+         */
+        function displayChange()
+        {
+            const element = document.getElementById('sizeslider');
+            const canvas = document.getElementById('canvas');
+            if (document.settings.hidevideo.checked)
             {
-                ctx.beginPath();
+                canvas.style.backgroundColor = "rgba(255,255,2550,0)";
+                element.setAttribute("disable", true);
 
-                points.slice(1).forEach(({ x, y }, prevIdx) =>
-                {
-                    const from = points[prevIdx];
-                    ctx.moveTo(from._x, from._y);
-                    ctx.lineTo(x, y);
-                })
-
-                if (isClosed)
-                {
-                    const from = points[points.length - 1];
-                    const to = points[0];
-                    if (!from || !to)
-                    {
-                        return;
-                    }
-
-                    ctx.moveTo(from._x, from._y);
-                    ctx.lineTo(to._x, to._y);
-                }
-
-                ctx.stroke();
             }
-
-            /**
-             * 
-             */
-            class MyFaceLandmarks
+            else
             {
-                constructor(positions)
-                {
-                    this.positions = positions;
-                }
-                getJawOutline()
-                {
-                    return this.positions.slice(0, 17);
-                }
-
-                getLeftEyeBrow()
-                {
-                    return this.positions.slice(17, 22);
-                }
-
-                getRightEyeBrow()
-                {
-                    return this.positions.slice(22, 27);
-                }
-
-                getNose()
-                {
-                    return this.positions.slice(27, 36);
-                }
-
-                getLeftEye()
-                {
-                    return this.positions.slice(36, 42);
-                }
-
-                getRightEye()
-                {
-                    return this.positions.slice(42, 48);
-                }
-
-                getMouth()
-                {
-                    return this.positions.slice(48, 68);
-                }
+                canvas.style.backgroundColor = "rgba(255,255,2550,1)";
             }
+        }
+        /**
+         * カメラ映像のサイズを調整します。
+         */
+        function videoSizeChange()
+        {
+            const element = document.getElementById('sizeslider');
+            const videoEl = document.getElementById('video');
+            videoEl.style.width = element.value + "%";
+        }
 
-            /**
-             * 
-             */
-            class MyDrawFaceLandmarks
+        /**
+         * 座標とキャンバスコンテキストを受け取り線を描画する。
+         * @param {canvasElement} ctx 
+         * @param {Array} points 
+         * @param {boolean} isClosed 
+         */
+        function myDrawContour(
+            ctx,
+            points,
+            isClosed = false
+        )
+        {
+            ctx.beginPath();
+
+            points.slice(1).forEach(({ x, y }, prevIdx) =>
             {
-                constructor(faceLandmarks)
-                {
-                    this.faceLandmarks = new MyFaceLandmarks(faceLandmarks);
-                }
-
-                draw(ctx)
-                {
-                    //myDrawContour(ctx, this.faceLandmarks.getJawOutline());
-                    myDrawContour(ctx, this.faceLandmarks.getLeftEyeBrow());
-                    myDrawContour(ctx, this.faceLandmarks.getRightEyeBrow());
-                    myDrawContour(ctx, this.faceLandmarks.getNose());
-                    myDrawContour(ctx, this.faceLandmarks.getLeftEye(), true);
-                    myDrawContour(ctx, this.faceLandmarks.getRightEye(), true);
-                    myDrawContour(ctx, this.faceLandmarks.getMouth(), true);
-                }
-            }
-
-
-            async function onPlay()
-            {
-                const img = new Image();
-                img.src = 'img/unchi.png';
-                const videoEl = document.getElementById('video');
-                const result = await faceapi.detectSingleFace(videoEl, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
-
-                if (result)
-                {
-                    const element = document.getElementById('canvas');
-                    const canvas = element.getContext('2d');
-                    const dims = faceapi.matchDimensions(element, videoEl, true);
-                    const resizedResults = faceapi.resizeResults(result, dims);
-                    const resizedResultsBox = resizedResults['alignedRect']['_box'];
-                    console.log(resizedResults);
-                    canvas.drawImage(img, resizedResultsBox['x'], resizedResultsBox['y'] - resizedResultsBox['height'] / 5, resizedResultsBox['width'], resizedResultsBox['height']);
-                    await new MyDrawFaceLandmarks(resizedResults['landmarks']['_positions']).draw(canvas);
-                }
-
-                setTimeout(() => onPlay());
-            }
-            async function run()
-            {
-                // load face detection and face landmark models
-                await faceapi.nets.tinyFaceDetector.load("models/");
-                await faceapi.nets.faceLandmark68Net.load("models/");
-                // try to access users webcam and stream the images
-                // to the video element
-                const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
-                const videoEl = document.getElementById('video');
-                videoEl.srcObject = stream;
-            }
-
-            document.addEventListener('DOMContentLoaded', function ()
-            {
-                run();
+                const from = points[prevIdx];
+                ctx.moveTo(from._x, from._y);
+                ctx.lineTo(x, y);
             })
+
+            if (isClosed)
+            {
+                const from = points[points.length - 1];
+                const to = points[0];
+                if (!from || !to)
+                {
+                    return;
+                }
+
+                ctx.moveTo(from._x, from._y);
+                ctx.lineTo(to._x, to._y);
+            }
+
+            ctx.stroke();
+        }
+
+        /**
+         * 顔パーツの座標を切り取る際に利用する。
+         */
+        class MyFaceLandmarks
+        {
+            constructor(positions)
+            {
+                this.positions = positions;
+            }
+            getJawOutline()
+            {
+                return this.positions.slice(0, 17);
+            }
+
+            getLeftEyeBrow()
+            {
+                return this.positions.slice(17, 22);
+            }
+
+            getRightEyeBrow()
+            {
+                return this.positions.slice(22, 27);
+            }
+
+            getNose()
+            {
+                return this.positions.slice(27, 36);
+            }
+
+            getLeftEye()
+            {
+                return this.positions.slice(36, 42);
+            }
+
+            getRightEye()
+            {
+                return this.positions.slice(42, 48);
+            }
+
+            getMouth()
+            {
+                return this.positions.slice(48, 68);
+            }
+        }
+
+        /**
+         * キャンバスへ顔を描画する。
+         * 
+         */
+        class MyDrawFaceLandmarks
+        {
+            constructor(faceLandmarks)
+            {
+                this.faceLandmarks = new MyFaceLandmarks(faceLandmarks);
+            }
+
+            draw(ctx)
+            {
+                //myDrawContour(ctx, this.faceLandmarks.getJawOutline());
+                myDrawContour(ctx, this.faceLandmarks.getLeftEyeBrow());
+                myDrawContour(ctx, this.faceLandmarks.getRightEyeBrow());
+                myDrawContour(ctx, this.faceLandmarks.getNose());
+                myDrawContour(ctx, this.faceLandmarks.getLeftEye(), true);
+                myDrawContour(ctx, this.faceLandmarks.getRightEye(), true);
+                myDrawContour(ctx, this.faceLandmarks.getMouth(), true);
+            }
+        }
+
+
+        async function onPlay()
+        {
+            const img = new Image();
+            img.src = 'img/unchi.png';
+            const videoEl = document.getElementById('video');
+            const result = await faceapi.detectSingleFace(videoEl, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
+
+            if (result)
+            {
+                const element = document.getElementById('canvas');
+                const canvas = element.getContext('2d');
+                const dims = faceapi.matchDimensions(element, videoEl, true);
+                const resizedResults = faceapi.resizeResults(result, dims);
+                const resizedResultsBox = resizedResults['alignedRect']['_box'];
+                //canvas初期化
+                canvas.fillStyle = 'rgb(255,255,255)';
+                canvas.fillRect(0, 0, canvas.width, canvas.height);
+                //
+                canvas.drawImage(img, resizedResultsBox['x'], resizedResultsBox['y'] - resizedResultsBox['height'] / 5, resizedResultsBox['width'], resizedResultsBox['height']);
+                await new MyDrawFaceLandmarks(resizedResults['landmarks']['_positions']).draw(canvas);
+            }
+
+            setTimeout(() => onPlay());
+        }
+
+        async function run()
+        {
+            // load face detection and face landmark models
+            await faceapi.nets.tinyFaceDetector.load("models/");
+            await faceapi.nets.faceLandmark68Net.load("models/");
+            // try to access users webcam and stream the images
+            // to the video element
+            const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+            const videoEl = document.getElementById('video');
+            videoEl.srcObject = stream;
+        }
+
+        document.addEventListener('DOMContentLoaded', function ()
+        {
+            run();
+        })
     </script>
 </body>
 
