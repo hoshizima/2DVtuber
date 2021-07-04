@@ -16,11 +16,6 @@
 </head>
 
 <body style="background-color: white;">
-    <div id="loader" class="d-flex justify-content-center"
-        style="position:absolute; height: 100vh; width: 100vw; z-index: 10; background-color: white;">
-        <div class="spinner-border" role="status">
-        </div>
-    </div>
     <div class="container-fluid">
         <div class="row">
             <form name="settings">
@@ -30,22 +25,33 @@
                     <label class="form-check-label" for="hideVideo">カメラの映像を表示する</label>
                 </div>
                 <label for="customRange1" class="form-label">カメラ映像サイズ</label>
-                <input type="range" value="0" max="100" class="form-range" id="sizeslider" onchange="videoSizeChange()">
+                <input type="range" value="0" max="100" class="form-range" id="sizeslider"
+                    onmousemove="videoSizeChange()">
             </form>
         </div>
         <div class="row">
-            <div class="col-lg-12 col-xl-9">
+            <div class="col-lg-12 col-xl-12">
+                <!--Webカメラ映像-->
                 <video onloadedmetadata="onPlay(this)" id="video" autoplay muted playsinline
                     style="position: absolute; z-index:0; width:0%;"></video>
-
+                <!--顔描画用Canvas-->
                 <canvas id="canvas"
                     style="position:absolute; z-index:2; background-color:rgba(255,255,2550,1);"></canvas>
+                <!--Loading画面-->
+                <div id="loader" class="d-flex justify-content-center"
+                    style="position:absolute; height: 100vh; width: 100vw; z-index: 10; background-color: white;">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">顔を認識しています</span>
+                    </div>
+                </div>
             </div>
-            <div class="col-lg-12 col-xl-3">
+        </div>
+        <div>
+            <div class="col-lg-12 col-xl-12">
                 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                <!-- スクエア -->
+                <!-- 横長ヘッダー用 -->
                 <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5397607715860650"
-                    data-ad-slot="1113849819" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                    data-ad-slot="2318919305" data-ad-format="auto" data-full-width-responsive="true"></ins>
                 <script>
                     (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
@@ -53,14 +59,16 @@
         </div>
     </div>
     <script type="text/javascript">
+        const loader = document.getElementById('loader');
+        const sizeslider = document.getElementById('sizeslider');
+        const video = document.getElementById('video');
+        const img = new Image();
         /**
          * ローディング表示を除去します。
          */
-        function removeLoadingScene()
+        function removeLoadingScene()                                                                                                                                                                                                                                                                                                                                                                                                                                               
         {
-            const loader = document.getElementById('loader');
             loader.remove();
-            console.log("test");
         }
         /**
          * カメラからの入力映像を隠します。
@@ -85,9 +93,7 @@
          */
         function videoSizeChange()
         {
-            const element = document.getElementById('sizeslider');
-            const videoEl = document.getElementById('video');
-            videoEl.style.width = element.value + "%";
+            video.style.width = sizeslider.value + "%";
         }
 
         /**
@@ -198,26 +204,24 @@
 
         async function onPlay()
         {
-            const img = new Image();
             img.src = 'img/unchi.png';
-            const videoEl = document.getElementById('video');
-            const result = await faceapi.detectSingleFace(videoEl, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
+            const result = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
 
             if (result)
             {
-                const element = document.getElementById('canvas');
-                const canvas = element.getContext('2d');
-                const dims = faceapi.matchDimensions(element, videoEl, true);
+                const canvas = document.getElementById('canvas');
+                const ctx2d = canvas.getContext('2d');
+                const dims = faceapi.matchDimensions(canvas, video, true);
                 const resizedResults = faceapi.resizeResults(result, dims);
                 const resizedResultsBox = resizedResults['alignedRect']['_box'];
+                removeLoadingScene();
                 //canvas初期化
-                canvas.fillStyle = 'rgb(255,255,255)';
-                canvas.fillRect(0, 0, canvas.width, canvas.height);
+                ctx2d.fillStyle = 'rgb(255,255,255)';
+                ctx2d.fillRect(0, 0, ctx2d.width, ctx2d.height);
                 //
-                canvas.drawImage(img, resizedResultsBox['x'], resizedResultsBox['y'] - resizedResultsBox['height'] / 5, resizedResultsBox['width'], resizedResultsBox['height']);
-                await new MyDrawFaceLandmarks(resizedResults['landmarks']['_positions']).draw(canvas);
+                ctx2d.drawImage(img, resizedResultsBox['x'], resizedResultsBox['y'] - resizedResultsBox['height'] / 5, resizedResultsBox['width'], resizedResultsBox['height']);
+                await new MyDrawFaceLandmarks(resizedResults['landmarks']['_positions']).draw(ctx2d);
             }
-
             setTimeout(() => onPlay());
         }
 
@@ -229,8 +233,7 @@
             // try to access users webcam and stream the images
             // to the video element
             const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
-            const videoEl = document.getElementById('video');
-            videoEl.srcObject = stream;
+            video.srcObject = stream;
         }
 
         document.addEventListener('DOMContentLoaded', function ()
