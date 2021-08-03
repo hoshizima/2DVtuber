@@ -1,6 +1,7 @@
 //各要素を取得
 const loader = document.getElementById('loader');
 const videosizeslider = document.getElementById('videosizeslider');
+const imgsizeslider = document.getElementById('imgsizeslider');
 const maincontents = document.getElementById('maincontents');
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
@@ -10,7 +11,8 @@ const relativepositionY = document.getElementById('relativepositionY');
 //
 const img = new Image();
 //
-let
+let imgsizeratio = 1.00;
+
 /**
  * ローディング表示を除去します。
  */
@@ -47,10 +49,36 @@ function videoSizeChange()
     video.style.width = videosizeslider.value + "%";
 }
 
-function lockimgposition()
+/**
+ * 画像を中央に固定します。
+ */
+function imgPositionLock()
+{
+    if (document.settings.lockimgposition.checked)
+    {
+        canvas.style.backgroundColor = "rgba(255,255,2550,0)";
+        videosizeslider.setAttribute("disable", true);
+
+    }
+    else
+    {
+        canvas.style.backgroundColor = "rgba(255,255,2550,1)";
+    }
+}
+
+/**
+ * 画像のサイズを調整します。
+ */
+function imgSizeChange()
+{
+    imgsizeratio = imgsizeslider.value / 100;
+}
+
+function adjustPositions()
 {
     
 }
+
 /**
  * 座標とキャンバスコンテキストを受け取り線を描画する。
  * @param {canvasElement} ctx 
@@ -167,12 +195,16 @@ async function onPlay()
         const dims = faceapi.matchDimensions(canvas, video, true);
         const resizedResults = faceapi.resizeResults(result, dims);
         const resizedResultsBox = resizedResults['alignedRect']['_box'];
+        
+        //初期化処理は別で一回実行でよいのでは
+        
         removeLoadingScene();
         //canvas初期化
         ctx2d.fillStyle = 'rgb(255,255,255)';
         ctx2d.fillRect(0, 0, ctx2d.width, ctx2d.height);
         //画像を描画
-        ctx2d.drawImage(img, resizedResultsBox['x'], resizedResultsBox['y'], resizedResultsBox['width'], resizedResultsBox['height']);
+        ctx2d.drawImage(img, resizedResultsBox['x'], resizedResultsBox['y'], resizedResultsBox['width']*imgsizeratio, resizedResultsBox['height']*imgsizeratio);
+        //顔を描画
         await new MyDrawFaceLandmarks(resizedResults['landmarks']['_positions']).draw(ctx2d);
     }
     setTimeout(() => onPlay());
