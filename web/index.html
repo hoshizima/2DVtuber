@@ -31,12 +31,15 @@
                 <label for="customRange1" class="form-label">カメラ映像サイズ（初期値：0）</label>
                 <input type="range" value="0" max="100" class="form-range" id="videosizeslider"
                     onmousemove="videoSizeChange()">
+                <input type="file" name="uploadimg" accept="image/jpeg, image/png">
                 <div class="form-group form-check">
-                    <input type="checkbox" class="form-check-input" name="lockimgposition" value="1" onchange="imgPositionLock()">
+                    <input type="checkbox" class="form-check-input" name="lockimgposition" value="1"
+                        onchange="imgPositionLock()">
                     <label class="form-check-label" for="lockimgposition">画像を中央に固定する</label>
                 </div>
                 <label for="customRange1" class="form-label">画像サイズ（初期値：100）</label>
-                <input type="range" value="100" max="200" class="form-range" id="imgsizeslider" onmousemove="imgSizeChange()">
+                <input type="range" value="100" max="200" class="form-range" id="imgsizeslider"
+                    onmousemove="imgSizeChange()">
 
             </form>
         </div>
