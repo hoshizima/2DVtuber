@@ -10,8 +10,13 @@ const ctx2d = canvas.getContext('2d');
 const relativepositionX = document.getElementById('relativepositionX');
 const relativepositionY = document.getElementById('relativepositionY');
 //
-const img = new Image();
+let img = new Image();
+img.src = 'img/unchi.png';
+let bgimg = new Image();
+bgimg.src = 'img/CyberBG.jpg';
 let fileReader = new FileReader();
+let adjustXvalue = 0;
+let adjustYvalue = 0;
 //
 let imgsizeratio = 1.00;
 
@@ -26,6 +31,17 @@ function removeLoadingScene()
     maincontents.style.height = canvas.height + "px";
     //ローディング画面を除去
     loader.remove();
+
+}
+/**
+ * キャンバス初期化
+ */
+function canvasInit()
+{
+    //canvas初期化
+    //ctx2d.fillStyle = 'rgb(255,255,255)';
+    //ctx2d.fillRect(0, 0, ctx2d.width, ctx2d.height);
+    ctx2d.drawImage(bgimg, 0, 0);
 }
 /**
  * カメラからの入力映像を隠します。
@@ -51,9 +67,14 @@ function videoSizeChange()
     video.style.width = videosizeslider.value + "%";
 }
 
-function changeImage()
+/**
+ * 画像を変更します。
+ * @param {imagefile} obj 
+ */
+function changeImage(obj)
 {
-    fileReader.onload = (function (){
+    fileReader.onload = (function ()
+    {
         img.src = fileReader.result;
     });
     fileReader.readAsDataURL(obj.files[0]);
@@ -84,11 +105,15 @@ function imgSizeChange()
     imgsizeratio = imgsizeslider.value / 100;
 }
 
-function adjustPositions()
+function imgPositionXChange()
 {
-    
+    adjustXvalue = parseInt(relativepositionX.value);
 }
 
+function imgPositionYChange()
+{
+    adjustYvalue = parseInt(relativepositionY.value);
+}
 /**
  * 座標とキャンバスコンテキストを受け取り線を描画する。
  * @param {canvasElement} ctx 
@@ -197,7 +222,6 @@ class MyDrawFaceLandmarks
 
 async function onPlay()
 {
-    img.src = 'img/unchi.png';
     const result = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
 
     if (result)
@@ -205,15 +229,13 @@ async function onPlay()
         const dims = faceapi.matchDimensions(canvas, video, true);
         const resizedResults = faceapi.resizeResults(result, dims);
         const resizedResultsBox = resizedResults['alignedRect']['_box'];
-        
+
         //初期化処理は別で一回実行でよいのでは
-        
+
         removeLoadingScene();
-        //canvas初期化
-        ctx2d.fillStyle = 'rgb(255,255,255)';
-        ctx2d.fillRect(0, 0, ctx2d.width, ctx2d.height);
+        canvasInit();
         //画像を描画
-        ctx2d.drawImage(img, resizedResultsBox['x'], resizedResultsBox['y'], resizedResultsBox['width']*imgsizeratio, resizedResultsBox['height']*imgsizeratio);
+        ctx2d.drawImage(img, resizedResultsBox['x'] + adjustXvalue, resizedResultsBox['y'] + adjustYvalue, resizedResultsBox['width'] * imgsizeratio, resizedResultsBox['height'] * imgsizeratio);
         //顔を描画
         await new MyDrawFaceLandmarks(resizedResults['landmarks']['_positions']).draw(ctx2d);
     }
