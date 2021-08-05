@@ -1,6 +1,7 @@
 //各要素を取得
 const loader = document.getElementById('loader');
 const videosizeslider = document.getElementById('videosizeslider');
+const loadingimg = document.getElementById('loadingimg');
 const imgsizeslider = document.getElementById('imgsizeslider');
 const maincontents = document.getElementById('maincontents');
 const video = document.getElementById('video');
@@ -10,6 +11,7 @@ const relativepositionX = document.getElementById('relativepositionX');
 const relativepositionY = document.getElementById('relativepositionY');
 //
 const img = new Image();
+let fileReader = new FileReader();
 //
 let imgsizeratio = 1.00;
 
@@ -47,6 +49,14 @@ function displayChange()
 function videoSizeChange()
 {
     video.style.width = videosizeslider.value + "%";
+}
+
+function changeImage()
+{
+    fileReader.onload = (function (){
+        img.src = fileReader.result;
+    });
+    fileReader.readAsDataURL(obj.files[0]);
 }
 
 /**
