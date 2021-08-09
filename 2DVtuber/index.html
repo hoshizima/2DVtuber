@@ -95,27 +95,10 @@
             </svg>
             質問、連絡はこちらへ
         </button>
+        <p>上手く動作しない場合はキャッシュの消去を試してみてください。（F12で開発者ツールを開き、ブラウザのリロードボタンを右クリックで可能です。）</p>
     </div>
     <!-- JS読み込み -->
     <script type="text/javascript" src="js/scripts.js"></script>
-    <script type="text/javascript">
-        function canvasRefresh()
-        {
-            //canvas初期化
-            //ctx2d.fillStyle = 'rgb(255,255,255)';
-            //ctx2d.fillRect(0, 0, ctx2d.width, ctx2d.height);
-            if (document.settings.greenback.checked)
-            {
-                ctx2d.fillStyle = 'rgb(0,255,0)';
-                ctx2d.fillRect(0, 0, canvas.width, canvas.height);
-            }
-            else
-            {
-                ctx2d.drawImage(bgimg, 0, 0);
-            }
-
-        }
-    </script>
 </body>
 
 </html>
