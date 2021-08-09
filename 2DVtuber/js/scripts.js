@@ -36,12 +36,21 @@ function removeLoadingScene()
 /**
  * キャンバス初期化
  */
-function canvasInit()
+function canvasRefresh()
 {
     //canvas初期化
     //ctx2d.fillStyle = 'rgb(255,255,255)';
     //ctx2d.fillRect(0, 0, ctx2d.width, ctx2d.height);
-    ctx2d.drawImage(bgimg, 0, 0);
+    if (document.settings.greenback.checked)
+    {
+        ctx2d.fillStyle = 'rgb(0,255,0)';
+        ctx2d.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    else
+    {
+        ctx2d.drawImage(bgimg, 0, 0);
+    }
+
 }
 /**
  * カメラからの入力映像を隠します。
@@ -231,9 +240,8 @@ async function onPlay()
         const resizedResultsBox = resizedResults['alignedRect']['_box'];
 
         //初期化処理は別で一回実行でよいのでは
-
         removeLoadingScene();
-        canvasInit();
+        canvasRefresh();
         //画像を描画
         ctx2d.drawImage(img, resizedResultsBox['x'] + adjustXvalue, resizedResultsBox['y'] + adjustYvalue, resizedResultsBox['width'] * imgsizeratio, resizedResultsBox['height'] * imgsizeratio);
         //顔を描画
