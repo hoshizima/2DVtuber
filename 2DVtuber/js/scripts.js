@@ -242,6 +242,7 @@ async function onPlay()
         //初期化処理は別で一回実行でよいのでは
         removeLoadingScene();
         canvasRefresh();
+        ctx2d.lineWidth = 3;
         //画像を描画
         ctx2d.drawImage(img, resizedResultsBox['x'] + adjustXvalue, resizedResultsBox['y'] + adjustYvalue, resizedResultsBox['width'] * imgsizeratio, resizedResultsBox['height'] * imgsizeratio);
         //顔を描画
